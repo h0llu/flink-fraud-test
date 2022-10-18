@@ -16,7 +16,7 @@ public class TransactionDeserializationSchema implements DeserializationSchema<T
 								DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 						),
 						LocalDateTime.parse(dateTimeToParse,
-								DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+								DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
 						))
 				.toMillis();
 	}

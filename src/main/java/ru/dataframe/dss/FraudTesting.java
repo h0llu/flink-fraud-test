@@ -15,7 +15,8 @@ import java.util.Properties;
 
 
 public class FraudTesting {
-	private static final String configPath = "src/main/resources/config.properties";
+	private static final String configPath = "/home/h0llu/everything/internship/java/projects" +
+			"/flink-fraud-test/src/main/resources/config.properties";
 
 	public static KafkaSource<Transaction> getSource(String topic, String bootstrapServer) {
 		return KafkaSource.<Transaction>builder()
@@ -54,7 +55,6 @@ public class FraudTesting {
 						.withTimestampAssigner((transaction, timestamp) -> transaction.getEventTime()),
 				"Transaction Source"
 		);
-		dataStream.print();
 		dataStream.keyBy(Transaction::getClientId)
 				.process(new CustomProcessFunction(windowDuration, new AverageAccumulator()))
 				.map(String::valueOf)
