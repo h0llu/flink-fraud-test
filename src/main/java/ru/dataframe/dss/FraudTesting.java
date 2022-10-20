@@ -49,6 +49,7 @@ public class FraudTesting {
 
 		final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
+
 		DataStream<Transaction> dataStream = env.fromSource(
 				getSource(sourceTopic, sourceBootstrapServer),
 				WatermarkStrategy.<Transaction>forMonotonousTimestamps()
