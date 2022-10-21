@@ -1,23 +1,18 @@
 package ru.dataframe.dss;
 
-import lombok.AllArgsConstructor;
-import lombok.Value;
+import lombok.Builder;
+import lombok.Data;
 
-@Value
-@AllArgsConstructor
+@Data
+@Builder
 public class BlacklistItem {
 	int id;
 	String clientId;
-	boolean flag;
+	boolean isBlacklisted;
 
-	public BlacklistItem(int id, String clientId, int flag) {
-		this.id = id;
-		this.clientId = clientId;
-		this.flag = flag != 0;
-	}
-
-	public static void main(String[] args) {
-		BlacklistItem item = new BlacklistItem(1, "abc", 3);
-		System.out.println(item);
-	}
+//	public BlacklistItem(int id, String clientId, int isBlacklisted) {
+//		this.id = id;
+//		this.clientId = clientId;
+//		this.isBlacklisted = isBlacklisted != 0;
+//	}
 }

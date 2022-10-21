@@ -4,19 +4,31 @@ import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.common.time.Time;
 import org.apache.flink.connector.base.DeliveryGuarantee;
+import org.apache.flink.connector.file.src.FileSource;
 import org.apache.flink.connector.kafka.sink.KafkaRecordSerializationSchema;
 import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.flink.connector.kafka.source.KafkaSource;
+import org.apache.flink.core.fs.Path;
+import org.apache.flink.formats.csv.CsvReaderFormat;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
+import java.io.File;
 import java.io.FileReader;
 import java.util.Properties;
 
 
 public class FraudTesting {
-	private static final String configPath = "/home/h0llu/everything/internship/java/projects" +
-			"/flink-fraud-test/src/main/resources/config.properties";
+	private static final String configPath = "/home/h0llu/everything/internship/dss-system/" +
+			"flink-fraud-test/src/main/resources/config.properties";
+	private static final String blacklistFilePath = "/home/h0llu/everything/internship/dss-system/" +
+			"flink-fraud-test/src/main/resources/blacklist.txt";
+
+	public static FileSource<BlacklistItem> getBlacklistSource(File file) {
+		CsvReaderFormat<BlacklistItem> csvFormat = CsvReaderFormat.forPojo(BlacklistItem.class);
+		return FileSource.forRecordStreamFormat(csvFormat, Path.fromLocalFile(file))
+				.build();
+	}
 
 	public static KafkaSource<Transaction> getSource(String topic, String bootstrapServer) {
 		return KafkaSource.<Transaction>builder()
@@ -56,11 +68,14 @@ public class FraudTesting {
 						.withTimestampAssigner((transaction, timestamp) -> transaction.getEventTime()),
 				"Transaction Source"
 		);
-//		DataStream<>
-		dataStream.keyBy(Transaction::getClientId)
-				.process(new CustomProcessFunction(windowDuration, new AverageAccumulator()))
-				.map(String::valueOf)
-				.sinkTo(getSink(sinkTopic, sinkBootstrapServer));
+		DataStream<BlacklistItem> blacklistDataStream =
+				env.fromSource(getBlacklistSource(new File(blacklistFilePath)),
+						WatermarkStrategy.noWatermarks(), "file-source");
+		blacklistDataStream.print();
+//		dataStream.keyBy(Transaction::getClientId)
+//				.process(new CustomProcessFunction(windowDuration, new AverageAccumulator()))
+//				.map(String::valueOf)
+//				.sinkTo(getSink(sinkTopic, sinkBootstrapServer));
 		env.execute();
 	}
 }
