@@ -56,6 +56,7 @@ public class FraudTesting {
 						.withTimestampAssigner((transaction, timestamp) -> transaction.getEventTime()),
 				"Transaction Source"
 		);
+//		DataStream<>
 		dataStream.keyBy(Transaction::getClientId)
 				.process(new CustomProcessFunction(windowDuration, new AverageAccumulator()))
 				.map(String::valueOf)
