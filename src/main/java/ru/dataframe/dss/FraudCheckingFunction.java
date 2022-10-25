@@ -8,7 +8,6 @@ import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
 import org.apache.flink.api.common.typeinfo.TypeHint;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.configuration.Configuration;
-import org.apache.flink.metrics.MeterView;
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.util.Collector;
 
@@ -17,7 +16,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 
-public class CustomProcessFunction extends KeyedProcessFunction<String, Transaction, Transaction> {
+public class FraudCheckingFunction extends KeyedProcessFunction<String, Transaction, Transaction> {
 	private final Long windowDuration;
 	private final MapStateDescriptor<Long, Set<Transaction>> windowStateDescriptor =
 			new MapStateDescriptor<>("windowState",
@@ -28,8 +27,8 @@ public class CustomProcessFunction extends KeyedProcessFunction<String, Transact
 	private final SimpleAccumulator<Double> aggregator;
 	private transient MapState<Long, Set<Transaction>> windowState;
 
-	public CustomProcessFunction(Time time, SimpleAccumulator<Double> aggregator) {
-		this.windowDuration = time.toMilliseconds();
+	public FraudCheckingFunction(Time windowDuration, SimpleAccumulator<Double> aggregator) {
+		this.windowDuration = windowDuration.toMilliseconds();
 		this.aggregator = aggregator;
 	}
 
@@ -47,9 +46,6 @@ public class CustomProcessFunction extends KeyedProcessFunction<String, Transact
 	public void open(Configuration parameters) throws Exception {
 		super.open(parameters);
 		windowState = getRuntimeContext().getMapState(windowStateDescriptor);
-
-		getRuntimeContext().getMetricGroup()
-				.meter("eventsPerSecond", new MeterView(60));
 	}
 
 	@Override
