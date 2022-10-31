@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 
-public class FraudCheckingFunction extends KeyedProcessFunction<String, Transaction, Transaction> {
+public class AverageFraudCheckingFunction extends KeyedProcessFunction<String, Transaction, Transaction> {
 	private final Long windowDuration;
 	private final MapStateDescriptor<Long, Set<Transaction>> windowStateDescriptor =
 			new MapStateDescriptor<>("windowState",
@@ -28,7 +28,7 @@ public class FraudCheckingFunction extends KeyedProcessFunction<String, Transact
 	private final SimpleAccumulator<Double> aggregator;
 	private transient MapState<Long, Set<Transaction>> windowState;
 
-	public FraudCheckingFunction(Time windowDuration, SimpleAccumulator<Double> aggregator) {
+	public AverageFraudCheckingFunction(Time windowDuration, SimpleAccumulator<Double> aggregator) {
 		this.windowDuration = windowDuration.toMilliseconds();
 		this.aggregator = aggregator;
 	}

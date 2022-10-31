@@ -1,49 +1,25 @@
 package ru.dataframe.dss.cases;
 
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
-import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.common.time.Time;
-import org.apache.flink.connector.base.DeliveryGuarantee;
-import org.apache.flink.connector.kafka.sink.KafkaRecordSerializationSchema;
-import org.apache.flink.connector.kafka.sink.KafkaSink;
-import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import ru.dataframe.dss.average.AverageAccumulator;
-import ru.dataframe.dss.average.FraudCheckingFunction;
+import ru.dataframe.dss.average.AverageFraudCheckingFunction;
 import ru.dataframe.dss.blacklist.FilterBlacklistedFunction;
 import ru.dataframe.dss.dto.Transaction;
-import ru.dataframe.dss.serialization.TransactionDeserializationSchema;
+import ru.dataframe.dss.utils.ConnectorProvider;
 
 import java.io.FileReader;
 import java.util.Properties;
 
 
-public class AverageAntifraudAndBlacklistFiltering {
+public class AverageAntiFraudAndBlacklistFiltering {
 	private static final String configPath = "/home/h0llu/everything/internship/dss-system/" +
 			"flink-fraud-test/src/main/resources/config.properties";
 	private static final String blacklistFilePath =
 			"/home/h0llu/everything/internship/dss-system/" +
 					"flink-fraud-test/src/main/resources/blacklist.txt";
-
-	public static KafkaSource<Transaction> getSource(String topic, String bootstrapServer) {
-		return KafkaSource.<Transaction>builder()
-				.setBootstrapServers(bootstrapServer)
-				.setTopics(topic)
-				.setValueOnlyDeserializer(new TransactionDeserializationSchema())
-				.build();
-	}
-
-	public static KafkaSink<String> getSink(String topic, String bootstrapServer) {
-		return KafkaSink.<String>builder()
-				.setBootstrapServers(bootstrapServer)
-				.setRecordSerializer(KafkaRecordSerializationSchema.builder()
-						.setTopic(topic)
-						.setValueSerializationSchema(new SimpleStringSchema())
-						.build())
-				.setDeliverGuarantee(DeliveryGuarantee.AT_LEAST_ONCE)
-				.build();
-	}
 
 	public static void main(String[] args) throws Exception {
 		Properties props = new Properties();
@@ -58,7 +34,7 @@ public class AverageAntifraudAndBlacklistFiltering {
 		final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
 		DataStream<Transaction> dataStream = env.fromSource(
-				getSource(sourceTopic, sourceBootstrapServer),
+				ConnectorProvider.getSource(sourceTopic, sourceBootstrapServer),
 				WatermarkStrategy.<Transaction>forMonotonousTimestamps()
 						.withTimestampAssigner((transaction, timestamp) -> transaction.getEventTime()),
 				"Transaction Source"
@@ -67,9 +43,9 @@ public class AverageAntifraudAndBlacklistFiltering {
 		dataStream.keyBy(Transaction::getClientId)
 				.process(new FilterBlacklistedFunction(blacklistFilePath))
 				.keyBy(Transaction::getClientId)
-				.process(new FraudCheckingFunction(windowDuration, new AverageAccumulator()))
+				.process(new AverageFraudCheckingFunction(windowDuration, new AverageAccumulator()))
 				.map(String::valueOf)
-				.sinkTo(getSink(sinkTopic, sinkBootstrapServer));
+				.sinkTo(ConnectorProvider.getSink(sinkTopic, sinkBootstrapServer));
 
 		env.execute();
 	}
