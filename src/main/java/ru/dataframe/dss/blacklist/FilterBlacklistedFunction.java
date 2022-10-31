@@ -1,4 +1,4 @@
-package ru.dataframe.dss;
+package ru.dataframe.dss.blacklist;
 
 import org.apache.flink.api.common.state.ListState;
 import org.apache.flink.api.common.state.ListStateDescriptor;
@@ -9,6 +9,8 @@ import org.apache.flink.runtime.state.FunctionSnapshotContext;
 import org.apache.flink.streaming.api.checkpoint.CheckpointedFunction;
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.util.Collector;
+import ru.dataframe.dss.dto.BlacklistItem;
+import ru.dataframe.dss.dto.Transaction;
 
 import java.util.Objects;
 

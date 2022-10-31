@@ -1,4 +1,4 @@
-package ru.dataframe.dss;
+package ru.dataframe.dss.cases;
 
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
@@ -9,12 +9,17 @@ import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import ru.dataframe.dss.average.AverageAccumulator;
+import ru.dataframe.dss.average.FraudCheckingFunction;
+import ru.dataframe.dss.blacklist.FilterBlacklistedFunction;
+import ru.dataframe.dss.dto.Transaction;
+import ru.dataframe.dss.serialization.TransactionDeserializationSchema;
 
 import java.io.FileReader;
 import java.util.Properties;
 
 
-public class FraudTesting {
+public class AverageAntifraudAndBlacklistFiltering {
 	private static final String configPath = "/home/h0llu/everything/internship/dss-system/" +
 			"flink-fraud-test/src/main/resources/config.properties";
 	private static final String blacklistFilePath =

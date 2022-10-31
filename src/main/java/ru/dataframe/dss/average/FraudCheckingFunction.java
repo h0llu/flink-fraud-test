@@ -1,4 +1,4 @@
-package ru.dataframe.dss;
+package ru.dataframe.dss.average;
 
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;
 import org.apache.flink.api.common.state.MapState;
@@ -10,6 +10,7 @@ import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.util.Collector;
+import ru.dataframe.dss.dto.Transaction;
 
 import java.util.HashSet;
 import java.util.Iterator;

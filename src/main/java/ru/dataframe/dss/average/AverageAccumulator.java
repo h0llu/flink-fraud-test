@@ -1,4 +1,4 @@
-package ru.dataframe.dss;
+package ru.dataframe.dss.average;
 
 import org.apache.flink.api.common.accumulators.Accumulator;
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;

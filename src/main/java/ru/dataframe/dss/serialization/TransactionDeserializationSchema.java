@@ -1,7 +1,8 @@
-package ru.dataframe.dss;
+package ru.dataframe.dss.serialization;
 
 import org.apache.flink.api.common.serialization.DeserializationSchema;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
+import ru.dataframe.dss.dto.Transaction;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

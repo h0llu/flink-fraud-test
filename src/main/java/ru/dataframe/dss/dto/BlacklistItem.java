@@ -1,4 +1,4 @@
-package ru.dataframe.dss;
+package ru.dataframe.dss.dto;
 
 import lombok.Data;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.annotation.JsonPropertyOrder;
