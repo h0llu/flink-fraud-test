@@ -1,6 +1,8 @@
 package ru.dataframe.dss.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.dataformat.csv.CsvMapper;
 
@@ -9,6 +11,8 @@ import java.util.List;
 
 @JsonPropertyOrder({"id", "clientId", "isBlacklisted"})
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class BlacklistItem {
 	private int id;
 	private String clientId;

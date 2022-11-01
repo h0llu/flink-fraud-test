@@ -18,15 +18,16 @@ import java.util.Objects;
 public class FilterBlacklistedFunction
 		extends KeyedProcessFunction<String, Transaction, Transaction>
 		implements CheckpointedFunction {
-	private final List<BlacklistItem> blacklist;
+	private transient final List<BlacklistItem> blacklist;
 	private transient ListState<BlacklistItem> blacklistItems;
 
 	public FilterBlacklistedFunction(List<BlacklistItem> blacklist) {
 		this.blacklist = blacklist;
+		System.out.println(blacklist);
 	}
 
 	@Override
-	public void snapshotState(FunctionSnapshotContext functionSnapshotContext) throws Exception {
+	public void snapshotState(FunctionSnapshotContext functionSnapshotContext) {
 	}
 
 	@Override
