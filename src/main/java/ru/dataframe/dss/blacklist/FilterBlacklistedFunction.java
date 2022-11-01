@@ -12,16 +12,17 @@ import org.apache.flink.util.Collector;
 import ru.dataframe.dss.dto.BlacklistItem;
 import ru.dataframe.dss.dto.Transaction;
 
+import java.util.List;
 import java.util.Objects;
 
 public class FilterBlacklistedFunction
 		extends KeyedProcessFunction<String, Transaction, Transaction>
 		implements CheckpointedFunction {
-	private final String blacklistPath;
+	private final List<BlacklistItem> blacklist;
 	private transient ListState<BlacklistItem> blacklistItems;
 
-	public FilterBlacklistedFunction(String blacklistPath) {
-		this.blacklistPath = blacklistPath;
+	public FilterBlacklistedFunction(List<BlacklistItem> blacklist) {
+		this.blacklist = blacklist;
 	}
 
 	@Override
@@ -39,7 +40,7 @@ public class FilterBlacklistedFunction
 		blacklistItems = functionInitializationContext.getOperatorStateStore()
 				.getListState(blacklistDescriptor);
 		blacklistItems.clear();
-		blacklistItems.addAll(BlacklistItem.getBlacklist(blacklistPath));
+		blacklistItems.addAll(blacklist);
 	}
 
 	@Override
