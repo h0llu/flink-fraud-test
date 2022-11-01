@@ -4,7 +4,6 @@ import lombok.Data;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.dataformat.csv.CsvMapper;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -15,9 +14,10 @@ public class BlacklistItem {
 	private String clientId;
 	private boolean isBlacklisted;
 
-	public static List<BlacklistItem> getBlacklist(String blacklistFilePath) throws IOException {
+	public static List<BlacklistItem> getBlacklist(String blacklistFileName) throws IOException {
 		return new CsvMapper().readerWithTypedSchemaFor(BlacklistItem.class)
-				.<BlacklistItem>readValues(new File(blacklistFilePath))
+				.<BlacklistItem>readValues(BlacklistItem.class.getClassLoader()
+						.getResourceAsStream(blacklistFileName))
 				.readAll();
 	}
 }
