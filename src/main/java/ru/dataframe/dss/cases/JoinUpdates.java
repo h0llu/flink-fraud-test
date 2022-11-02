@@ -26,7 +26,6 @@ public class JoinUpdates {
 		String transactionSourceTopic = config.getProperty("transaction_source.topic");
 		String blacklistSourceTopic = config.getProperty("blacklist_source.topic");
 		String sinkTopic = config.getProperty("sink.topic");
-		Time windowDuration = Time.seconds(Long.parseLong(config.getProperty("window-duration")));
 
 		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
