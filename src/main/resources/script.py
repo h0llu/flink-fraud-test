@@ -1,3 +1,1 @@
-import numpy as np
-
-amount *= 3
+transaction.setClientAvg(150000)
